@@ -84,9 +84,7 @@ exports.getOneSauce = (req, res, next) => {
   
   
 
-// @desc Ajoute opinion pour la sauce
-// @route POST /api/sauces/:id
-// @access Privée
+// POST /api/sauces/:id 
 exports.likeOrDislike = async (req, res) => {
   try {
       const sauce = await Sauce.findById(req.params.id)
