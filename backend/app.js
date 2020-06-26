@@ -9,6 +9,11 @@ const path = require('path');
 
 const app = express();
 
+const mongoSanitize = require('mongo-sanitize');
+
+
+const xss = require('xss-clean');
+
 const mongoose = require('mongoose');
 
 const saucesRoutes = require('./routes/sauces');
@@ -19,12 +24,21 @@ const dotenv = require('dotenv').config()
 
 const bouncer = require ("express-bouncer") (500, 900000, 5)
 
+
+// Empêche les attaques cross-site scripting (xss)
+app.use(xss());
+
 // Connexion cryptée à la base de données
 mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/database1?retryWrites=true&w=majority`,
 { useNewUrlParser: true,
   useUnifiedTopology: true })
 .then(() => console.log('Connexion à MongoDB réussie !'))
 .catch(() => console.log('Connexion à MongoDB échouée !'));
+
+
+
+// Désinfecte les inputs contre les injections
+app.use(mongoSanitize());
 
 // Cors
 app.use((req, res, next) => {
